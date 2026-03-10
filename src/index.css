@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #16C47F;
+  --color-accent: #2563EB;
+  --color-app-bg: #F5F7FB;
+  --radius-xl: 20px;
+  --shadow-premium: 0px 12px 30px rgba(0,0,0,0.06);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-app-bg text-slate-900 font-sans;
+  }
+}
+
+.glass-card {
+  @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-premium rounded-xl;
+}
+
+.premium-card {
+  @apply bg-white shadow-premium rounded-xl border border-slate-100;
+}
+
+/* Hide scrollbar for horizontal scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
