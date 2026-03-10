@@ -9,6 +9,7 @@ interface Props {
   onSelectCategory: (id: string) => void;
   onSelectStore: (store: Store) => void;
   onSelectProduct: (product: Product) => void;
+  onAddToCart: (product: Product) => void;
   onOpenCart: () => void;
   onOpenProfile: () => void;
   cartCount: number;
@@ -19,11 +20,23 @@ export default function HomeScreen({
   onSelectCategory, 
   onSelectStore, 
   onSelectProduct, 
+  onAddToCart,
   onOpenCart, 
   onOpenProfile,
   cartCount 
 }: Props) {
   const [activeBanner, setActiveBanner] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredProducts = PRODUCTS.filter(p => 
+    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    p.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredStores = STORES.filter(s => 
+    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    s.categories.some(c => c.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -70,6 +83,8 @@ export default function HomeScreen({
           <input 
             type="text" 
             placeholder="Search groceries, food or stores"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-12 pr-4 py-4 bg-white rounded-2xl border border-slate-100 shadow-sm outline-none focus:ring-2 focus:ring-primary/10 transition-all font-medium"
           />
         </div>
@@ -132,7 +147,7 @@ export default function HomeScreen({
           <h2 className="text-xl font-bold text-slate-900">Nearby Stores</h2>
         </div>
         <div className="flex flex-col gap-4 px-6">
-          {STORES.map(store => (
+          {filteredStores.length > 0 ? filteredStores.map(store => (
             <motion.button 
               key={store.id}
               whileTap={{ scale: 0.98 }}
@@ -162,7 +177,9 @@ export default function HomeScreen({
                 </div>
               </div>
             </motion.button>
-          ))}
+          )) : (
+            <div className="py-8 text-center text-slate-400 font-medium">No stores found</div>
+          )}
         </div>
       </div>
 
@@ -172,7 +189,7 @@ export default function HomeScreen({
           <h2 className="text-xl font-bold text-slate-900">Trending Now</h2>
         </div>
         <div className="flex gap-4 overflow-x-auto no-scrollbar px-6">
-          {PRODUCTS.map(product => (
+          {filteredProducts.length > 0 ? filteredProducts.map(product => (
             <motion.button 
               key={product.id}
               whileTap={{ scale: 0.95 }}
@@ -186,12 +203,20 @@ export default function HomeScreen({
               <p className="text-xs text-slate-500 mb-2">{product.category}</p>
               <div className="flex items-center justify-between">
                 <span className="font-bold text-primary">₹{product.price}</span>
-                <div className="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center shadow-md shadow-primary/20">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAddToCart(product);
+                  }}
+                  className="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center shadow-md shadow-primary/20 active:scale-90 transition-transform"
+                >
                   <span className="text-lg font-bold">+</span>
-                </div>
+                </button>
               </div>
             </motion.button>
-          ))}
+          )) : (
+            <div className="py-4 text-slate-400 font-medium">No products found</div>
+          )}
         </div>
       </div>
 

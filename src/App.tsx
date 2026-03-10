@@ -25,12 +25,25 @@ import OrderSuccessScreen from './screens/OrderSuccessScreen';
 import OrderTrackingScreen from './screens/OrderTrackingScreen';
 import ProfileScreen from './screens/ProfileScreen';
 
+// Components
+import MiniCart from './components/MiniCart';
+import Toast from './components/Toast';
+
 export default function App() {
   const [state, setState] = useState<AppState>({
     view: 'splash',
     user: null,
     cart: [],
   });
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const triggerToast = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
+  };
 
   const setView = (view: View) => setState(prev => ({ ...prev, view }));
   
@@ -47,6 +60,7 @@ export default function App() {
       }
       return { ...prev, cart: [...prev.cart, { ...product, quantity: 1 }] };
     });
+    triggerToast(`${product.name} added to cart!`);
   };
 
   const removeFromCart = (productId: string) => {
@@ -112,6 +126,7 @@ export default function App() {
             onSelectCategory={selectCategory}
             onSelectStore={selectStore}
             onSelectProduct={selectProduct}
+            onAddToCart={addToCart}
             onOpenCart={() => setView('cart')}
             onOpenProfile={() => setView('profile')}
             cartCount={state.cart.length}
@@ -124,6 +139,7 @@ export default function App() {
           <CategoryProductsScreen 
             category={state.selectedCategory!} 
             onSelectProduct={selectProduct}
+            onAddToCart={addToCart}
             onBack={() => setView('home')}
           />
         );
@@ -132,6 +148,7 @@ export default function App() {
           <StoreScreen 
             store={state.selectedStore!} 
             onSelectProduct={selectProduct}
+            onAddToCart={addToCart}
             onBack={() => setView('home')}
           />
         );
@@ -180,6 +197,8 @@ export default function App() {
 
   return (
     <div className="max-w-md mx-auto h-screen bg-app-bg overflow-hidden relative shadow-2xl">
+      <Toast isVisible={showToast} message={toastMessage} />
+      
       <AnimatePresence mode="wait">
         <motion.div
           key={state.view}
@@ -192,6 +211,10 @@ export default function App() {
           {renderView()}
         </motion.div>
       </AnimatePresence>
+
+      {['home', 'categories', 'category-products', 'store', 'product'].includes(state.view) && (
+        <MiniCart items={state.cart} onClick={() => setView('cart')} />
+      )}
     </div>
   );
 }

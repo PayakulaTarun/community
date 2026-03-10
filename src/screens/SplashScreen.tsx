@@ -52,7 +52,7 @@ export default function SplashScreen({ onComplete }: Props) {
         <motion.div
           initial={{ x: "-100%" }}
           animate={{ x: "0%" }}
-          transition={{ duration: 2.5, ease: "easeInOut" }}
+          transition={{ duration: 3.0, ease: "easeInOut" }}
           className="h-full w-full bg-white"
         />
       </div>

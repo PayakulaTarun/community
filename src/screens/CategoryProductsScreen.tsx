@@ -7,10 +7,11 @@ import { Product } from '../types';
 interface Props {
   category: string;
   onSelectProduct: (product: Product) => void;
+  onAddToCart: (product: Product) => void;
   onBack: () => void;
 }
 
-export default function CategoryProductsScreen({ category, onSelectProduct, onBack }: Props) {
+export default function CategoryProductsScreen({ category, onSelectProduct, onAddToCart, onBack }: Props) {
   const categoryName = CATEGORIES.find(c => c.id === category)?.name || 'Products';
   const filteredProducts = category === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.category === category);
 
@@ -73,9 +74,15 @@ export default function CategoryProductsScreen({ category, onSelectProduct, onBa
               <p className="text-xs text-slate-500 mb-3">{product.category}</p>
               <div className="flex items-center justify-between">
                 <span className="font-bold text-primary text-lg">₹{product.price}</span>
-                <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAddToCart(product);
+                  }}
+                  className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 active:scale-90 transition-transform"
+                >
                   <span className="text-xl font-bold">+</span>
-                </div>
+                </button>
               </div>
             </motion.button>
           ))}

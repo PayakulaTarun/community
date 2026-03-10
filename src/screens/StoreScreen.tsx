@@ -7,10 +7,11 @@ import { PRODUCTS } from '../constants';
 interface Props {
   store: Store;
   onSelectProduct: (product: Product) => void;
+  onAddToCart: (product: Product) => void;
   onBack: () => void;
 }
 
-export default function StoreScreen({ store, onSelectProduct, onBack }: Props) {
+export default function StoreScreen({ store, onSelectProduct, onAddToCart, onBack }: Props) {
   const [activeTab, setActiveTab] = useState('Products');
   const storeProducts = PRODUCTS.filter(p => store.categories.includes(p.category));
 
@@ -86,9 +87,15 @@ export default function StoreScreen({ store, onSelectProduct, onBack }: Props) {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-primary text-lg">₹{product.price}</span>
-                    <div className="px-4 py-1.5 bg-primary/10 text-primary rounded-lg text-xs font-bold border border-primary/20">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAddToCart(product);
+                      }}
+                      className="px-4 py-1.5 bg-primary text-white rounded-lg text-xs font-bold shadow-md shadow-primary/20 active:scale-95 transition-transform"
+                    >
                       ADD
-                    </div>
+                    </button>
                   </div>
                 </div>
               </motion.button>
